@@ -2,6 +2,7 @@
 from datetime import timedelta
 import time
 import datetime
+import sqlite3
 
 withDateMode = False
 dateformatPattern = "%Y-%m-%d"
@@ -9,7 +10,7 @@ dateToday = datetime.datetime(2015,9,24)
 cyleLength = 28
 periodLength = 4
 membershipId = ""
-
+insertSql = 'INSERT INTO CYCLE (START_DATE, END_DATE, MEMBER_ID, CYCLE_LENGTH, PERIOD_LENGTH) VALUES(?,?,?,?,?)'
 if(withDateMode):
     millionsPattern = " (%s)(%.0f)"
 else:
@@ -20,6 +21,9 @@ def generateDatetimeBefore(start,endDelta,cycleLength):
     startMsg = millionsPattern%(realDateTimeStr(startDatetime),dateToMillions(startDatetime))
     endMsg = millionsPattern%(realDateTimeStr(endDatetime),dateToMillions(endDatetime))
     print("| %s | %s | %s | %d | %d |"%(startMsg, endMsg, membershipId, cyleLength, periodLength))
+    data = [dateToMillions(startDatetime), dateToMillions(endDatetime), membershipId,cyleLength,periodLength]
+    cur.execute(insertSql,data)
+    con.commit()
     return startDatetime
 
 def generateCurrentPredictCycle(periodStartDate):
@@ -27,7 +31,10 @@ def generateCurrentPredictCycle(periodStartDate):
     startMsg = millionsPattern%(realDateTimeStr(periodStartDate),dateToMillions(periodStartDate))
     endMsg = millionsPattern%(realDateTimeStr(endDatetime),dateToMillions(endDatetime))
     print("| %s | %s | %s | %d | %d |"%(startMsg, endMsg, membershipId, cyleLength, periodLength))
-
+    data = [dateToMillions(periodStartDate), dateToMillions(endDatetime), membershipId,cyleLength,periodLength]
+    cur.execute(insertSql,data)
+    con.commit()
+    return  periodStartDate
 def realDateTimeStr(visualDateTime):
     result = ""
     if(withDateMode):
@@ -40,6 +47,13 @@ def dateToMillions(dateTime):
 def millionsToDate(millions):
     utc_time = datetime.datetime(1970, 1, 1) + timedelta(milliseconds=millions)
     print(utc_time.strftime("%Y-%m-%d"))
+
+con = sqlite3.connect("C:/Users/dell/Desktop/db/shine-db")
+cur = con.cursor()
+cur.execute('SELECT * FROM CYCLE')
+print (cur.fetchall())
+cur.execute('delete from CYCLE')
+con.commit()
 
 lastCycleStart = dateToday + timedelta(days = 1);
 lastCycleEnd = lastCycleStart + timedelta(days=cyleLength-1)
@@ -54,6 +68,12 @@ start = generateDatetimeBefore(lastCycleStart,1,cyleLength)
 start = generateDatetimeBefore(start,1,cyleLength)
 start = generateDatetimeBefore(start,1,cyleLength)
 start = generateDatetimeBefore(start,1,cyleLength)
+
+
+print (cur.fetchall())
+con.close()
+
+
 
 
 
