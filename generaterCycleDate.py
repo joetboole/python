@@ -4,12 +4,14 @@ import time
 import datetime
 import sqlite3
 
-withDateMode = False
+withDateMode = True
 dateformatPattern = "%Y-%m-%d"
 dateToday = datetime.datetime(2015,9,24)
 cyleLength = 28
 periodLength = 4
-membershipId = ""
+membershipId = "5040562606015194"
+# "C:/Users/dell/Desktop/db/shine-db"
+dbPath = "C:/Users/joez/Desktop/db/shine-db"
 insertSql = 'INSERT INTO CYCLE (START_DATE, END_DATE, MEMBER_ID, CYCLE_LENGTH, PERIOD_LENGTH) VALUES(?,?,?,?,?)'
 if(withDateMode):
     millionsPattern = " (%s)(%.0f)"
@@ -48,7 +50,7 @@ def millionsToDate(millions):
     utc_time = datetime.datetime(1970, 1, 1) + timedelta(milliseconds=millions)
     print(utc_time.strftime("%Y-%m-%d"))
 
-con = sqlite3.connect("C:/Users/dell/Desktop/db/shine-db")
+con = sqlite3.connect(dbPath)
 cur = con.cursor()
 cur.execute('SELECT * FROM CYCLE')
 print (cur.fetchall())
@@ -68,7 +70,9 @@ start = generateDatetimeBefore(lastCycleStart,1,cyleLength)
 start = generateDatetimeBefore(start,1,cyleLength)
 start = generateDatetimeBefore(start,1,cyleLength)
 start = generateDatetimeBefore(start,1,cyleLength)
-
+start = generateDatetimeBefore(start,1,cyleLength)
+start = generateDatetimeBefore(start,1,cyleLength)
+start = generateDatetimeBefore(start,1,cyleLength)
 
 print (cur.fetchall())
 con.close()
